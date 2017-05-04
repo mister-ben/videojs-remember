@@ -8,6 +8,13 @@
     player.on('timeupdate', time_updated);
     player.on('ended', time_updated);
 
+    function getKey() {
+      if (player.mediainfo) {
+        return options.localStorageKey + '.' + player.mediainfo.id;
+      }
+      return options.localStorageKey;
+    }
+
     function time_updated(time_update_event){
       var current_time = this.currentTime();
       var duration = this.duration();
@@ -18,8 +25,8 @@
       }
 
       if (isLoaded) {
-        if (options.localStorageKey) {
-          localStorage[options.localStorageKey] = time;
+        if (getKey()) {
+          localStorage[getKey()] = time;
         }
 
         if (options.sessionStorageKey) {
@@ -34,8 +41,8 @@
         isLoaded = true;
         var seek;
 
-        if (options.localStorageKey) {
-          seek = parseInt(localStorage[options.localStorageKey]);
+        if (getKey()) {
+          seek = parseInt(localStorage[getKey()]);
         }
 
         if (options.sessionStorageKey) {
@@ -54,8 +61,8 @@
       var seek;
 
       if (evt.data.slice(0, 16) == "localStorageKey:") {
-        options.localStorageKey = evt.data.slice(16);
-        seek = parseInt(localStorage[options.localStorageKey]);
+        getKey() = evt.data.slice(16);
+        seek = parseInt(localStorage[getKey()]);
       }
 
       if (evt.data.slice(0, 18) == "sessionStorageKey:") {
